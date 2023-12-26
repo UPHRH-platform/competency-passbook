@@ -9,10 +9,10 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.sphere.compentency.app</groupId>
-	<artifactId>compentency-tool</artifactId>
+	<artifactId>compentency-passbook</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>compentency-tool</name>
-	<description>compentency-tool project for Spring Boot</description>
+	<name>compentency-passbook</name>
+	<description>compentency-passbook project for Spring Boot</description>
 	<properties>
 		<java.version>1.8</java.version>
 	</properties>
@@ -81,7 +81,7 @@
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
 				<configuration>
-					<mainClass>com.sphere.compentencytool.kafka.consumer.api.kafkaConsumer</mainClass>
+					<mainClass>com.sphere.compentency.kafka.consumer.api.kafkaConsumer</mainClass>
 				</configuration>
 			</plugin>
 		</plugins>

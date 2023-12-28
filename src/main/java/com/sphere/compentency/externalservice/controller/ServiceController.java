@@ -32,23 +32,23 @@ public class ServiceController {
 		 return externalService.read_content(ContentID);
 		}
 	 
-	 @PostMapping(value = "/generate-token",consumes = {MediaType.APPLICATION_FORM_URLENCODED_VALUE})
-		public ResponseEntity<String> GenerateToken(String username,String password,String client_id,String grant_type){
-		 System.out.println("generate token : "+username+password+client_id+grant_type);
-		 
-		 MultiValueMap<String, String> map = new LinkedMultiValueMap<>();
-		 map.add("username",username);
-		 map.add("password",password);
-		 map.add("client_id",client_id);
-		 map.add("grant_type",grant_type);
-		 return externalService.Generate_token(map);
-		
-		}
+//	 @PostMapping(value = "/generate-token",consumes = {MediaType.APPLICATION_FORM_URLENCODED_VALUE})
+//		public ResponseEntity<String> GenerateToken(String username,String password,String client_id,String grant_type){
+//		 System.out.println("generate token : "+username+password+client_id+grant_type);
+//
+//		 MultiValueMap<String, String> map = new LinkedMultiValueMap<>();
+//		 map.add("username",username);
+//		 map.add("password",password);
+//		 map.add("client_id",client_id);
+//		 map.add("grant_type",grant_type);
+//		 return externalService.Generate_token(map);
+//
+//		}
 	 
-	 @GetMapping("/verify-token")
-		public ResponseEntity<String> VerifyToken(@RequestHeader Map<String,String> headers){
-		 System.out.println(headers);
-		 return externalService.Verify_token(headers);
-		}
+//	 @GetMapping("/verify-token")
+//		public ResponseEntity<String> VerifyToken(@RequestHeader Map<String,String> headers){
+//		 System.out.println(headers);
+//		 return externalService.Verify_token(headers);
+//		}
 	 
 }

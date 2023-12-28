@@ -64,30 +64,30 @@ public class ExternalServiceImpl implements ExternalService {
 		
 	}
 
-	@Override
-	public ResponseEntity<String> Generate_token(MultiValueMap<String, String> map) {
-		// TODO Auto-generated method stub
-		HttpHeaders headers = new HttpHeaders();
-		headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
-		HttpEntity<MultiValueMap<String, String>> body_request = new HttpEntity<>(map, headers);
-
-		ResponseEntity<String> response=restTemplate.exchange(props.getGenerateToken(),HttpMethod.POST,body_request,String.class);
-		
-		return response;
-	}
-	
-	@Override
-	public ResponseEntity<String> Verify_token(Map<String, String> headers) {
-		// TODO Auto-generated method stub
-		HttpHeaders header=new HttpHeaders();
-		header.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
-		header.add("Authorization",headers.get("authorization") );
-		HttpEntity<String> entity=new HttpEntity<String>("parameters",header);
-		System.out.println(props.getVerifyToken());
-		System.out.println(headers.get("authorization") );
-		ResponseEntity<String> response=restTemplate.exchange(props.getVerifyToken(),HttpMethod.GET,entity,String.class);
-	
-		return response;
-	}
+//	@Override
+//	public ResponseEntity<String> Generate_token(MultiValueMap<String, String> map) {
+//		// TODO Auto-generated method stub
+//		HttpHeaders headers = new HttpHeaders();
+//		headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
+//		HttpEntity<MultiValueMap<String, String>> body_request = new HttpEntity<>(map, headers);
+//
+//		ResponseEntity<String> response=restTemplate.exchange(props.getGenerateToken(),HttpMethod.POST,body_request,String.class);
+//
+//		return response;
+//	}
+//
+//	@Override
+//	public ResponseEntity<String> Verify_token(Map<String, String> headers) {
+//		// TODO Auto-generated method stub
+//		HttpHeaders header=new HttpHeaders();
+//		header.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
+//		header.add("Authorization",headers.get("authorization") );
+//		HttpEntity<String> entity=new HttpEntity<String>("parameters",header);
+//		System.out.println(props.getVerifyToken());
+//		System.out.println(headers.get("authorization") );
+//		ResponseEntity<String> response=restTemplate.exchange(props.getVerifyToken(),HttpMethod.GET,entity,String.class);
+//
+//		return response;
+//	}
 
 }

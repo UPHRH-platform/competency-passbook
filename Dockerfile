@@ -11,6 +11,6 @@ RUN apt-get update \
         xfonts-base \
         xz-utils
 
-COPY compentency-tool-0.0.1-SNAPSHOT.jar /opt/
+COPY target/compentency-passbook-0.0.1-SNAPSHOT.jar /opt/
 #HEALTHCHECK --interval=30s --timeout=30s CMD curl --fail http://localhost:7001/actuator/health || exit 1
-CMD ["java", "-XX:+PrintFlagsFinal", "-XX:+UnlockExperimentalVMOptions", "-XX:+UseCGroupMemoryLimitForHeap", "-jar", "/opt/compentency-tool-0.0.1-SNAPSHOT.jar"]
+CMD ["java", "-XX:+PrintFlagsFinal", "-XX:+UnlockExperimentalVMOptions", "-XX:+UseCGroupMemoryLimitForHeap", "-jar", "/opt/compentency-passbook-0.0.1-SNAPSHOT.jar"]

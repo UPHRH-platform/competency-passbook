@@ -1,59 +1,49 @@
-package com.sphere.compentency.kafka.consumer.api;
+package com.sphere.compentency.kafka;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.sphere.compentency.common.utils.propertiesCache;
+import com.sphere.compentency.utils.AppProperties;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
-import org.apache.kafka.clients.producer.KafkaProducer;
-import org.apache.kafka.clients.producer.Producer;
-import org.apache.kafka.clients.producer.ProducerConfig;
-import org.apache.kafka.clients.producer.ProducerRecord;
 import org.apache.kafka.common.serialization.StringDeserializer;
-import org.apache.kafka.common.serialization.StringSerializer;
-import org.json.JSONArray;
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.context.annotation.ComponentScan;
+import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.time.Duration;
 import java.util.Arrays;
 import java.util.Properties;
-
+@Component
 public class kafkaConsumer {
+    @Autowired
+    private AppProperties props;
 
+    @Autowired
+    private ApiService api_services;
 
-    private static final Logger logger = LoggerFactory.getLogger(kafkaConsumer.class);
-    private static ApiService api_services = new ApiService();
-
-    public static void startKafkaConsumer() {
-        propertiesCache env = new propertiesCache();
-
-
-        String bootstrapServers = "localhost:9092";
-        String groupId = "dev-activity-aggregate-updater-group";
-        String topic = "dev.issue.certificate.request";
-        System.out.println("Bootstrap Servers: " + bootstrapServers);
+    private final Logger logger = LoggerFactory.getLogger(kafkaConsumer.class);
+    public kafkaConsumer(AppProperties props, ApiService api_services) {
+        this.props = props;
+        this.api_services = api_services;
+    }
+    public void startKafkaConsumer() {
 
         // Creating consumer properties
         Properties properties = new Properties();
-        properties.setProperty(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
+        properties.setProperty(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, props.getKafkaBootstrapServers());
         properties.setProperty(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class.getName());
         properties.setProperty(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class.getName());
-        properties.setProperty(ConsumerConfig.GROUP_ID_CONFIG, groupId);
+        properties.setProperty(ConsumerConfig.GROUP_ID_CONFIG, props.getKafkaGroupID());
         properties.setProperty(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "latest");
 
         // Creating consumer
         KafkaConsumer<String, String> consumer = new KafkaConsumer<>(properties);
 
         // Subscribing to the topic
-        consumer.subscribe(Arrays.asList(topic));
+        consumer.subscribe(Arrays.asList(props.getKafkaTopic()));
         logger.info("Kafka consumer subscribed and running");
 
         // Polling for messages
@@ -72,7 +62,7 @@ public class kafkaConsumer {
         }
     }
 
-    private static void processKafkaMessage(ConsumerRecord<String, String> record) throws IOException, InterruptedException {
+    private void processKafkaMessage(ConsumerRecord<String, String> record) throws IOException, InterruptedException {
         logger.info("Inside processKafkaMessage with record " + record);
         String msg = record.value();
         if (msg != null && !msg.isEmpty() && !msg.trim().isEmpty()) {

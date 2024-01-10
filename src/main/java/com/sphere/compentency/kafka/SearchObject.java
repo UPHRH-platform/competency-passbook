@@ -1,4 +1,4 @@
-package com.sphere.compentency.kafka.consumer.api;
+package com.sphere.compentency.kafka;
 
 import lombok.Getter;
 import lombok.Setter;

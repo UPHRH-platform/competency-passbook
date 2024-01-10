@@ -1,16 +1,17 @@
 package com.sphere.compentency;
 
-import com.sphere.compentency.kafka.consumer.api.kafkaConsumer;
+import com.sphere.compentency.kafka.kafkaConsumer;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.ConfigurableApplicationContext;
 
 @SpringBootApplication
-@ComponentScan(basePackages = "com.sphere.compentency.kafka.consumer.api")
 public class CompentencyApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(CompentencyApplication.class, args);
-		kafkaConsumer.startKafkaConsumer();
+		ConfigurableApplicationContext context = SpringApplication.run(CompentencyApplication.class, args);
+
+		kafkaConsumer consumer = context.getBean(kafkaConsumer.class);
+		consumer.startKafkaConsumer();
 	}
 }

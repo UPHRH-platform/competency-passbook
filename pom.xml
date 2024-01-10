@@ -81,7 +81,7 @@
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
 				<configuration>
-					<mainClass>com.sphere.compentency.kafka.kafkaConsumer</mainClass>
+					<mainClass>com.sphere.compentency.CompentencyApplication</mainClass>
 				</configuration>
 			</plugin>
             <plugin>

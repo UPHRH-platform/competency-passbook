@@ -14,11 +14,11 @@ import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import java.io.BufferedReader;
 import java.io.IOException;
-import java.net.URI;
-import java.net.http.HttpClient;
-import java.net.http.HttpRequest;
-import java.net.http.HttpResponse;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
@@ -125,8 +125,7 @@ public class ApiService {
                         }
                     }
                     int maxLevel = Arrays.stream(levelArray)
-                            .max()
-                    .orElseThrow();
+                            .max().getAsInt();
 
 
                     JSONObject acquiredDetails = new JSONObject();
@@ -165,50 +164,57 @@ public class ApiService {
         Map<String, Map<String, Object>> competencyMap = new HashMap<>();
 
         try {
-            // Make a GET request to the framework URL
-            HttpClient httpClient = HttpClient.newHttpClient();
-            HttpRequest request = HttpRequest.newBuilder().uri(URI.create(frameworkUrl)).build();
+            URL url = new URL(frameworkUrl);
+            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+            connection.setRequestMethod("GET");
 
-            HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
-            String responseBody = response.body();
+            // Read the response
+            try (BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getInputStream()))) {
+                StringBuilder response = new StringBuilder();
+                String line;
+                while ((line = reader.readLine()) != null) {
+                    response.append(line);
+                }
 
-            // Parse the response as JSON
-            ObjectMapper objectMapper = new ObjectMapper();
-            JsonNode frameworkJson = objectMapper.readTree(responseBody);
+                String responseBody = response.toString();
 
-            // Access the framework node in the response
-            JsonNode framework = frameworkJson.get("result").get("framework");
+                // Parse the response as JSON
+                ObjectMapper objectMapper = new ObjectMapper();
+                JsonNode frameworkJson = objectMapper.readTree(responseBody);
 
-            for (JsonNode category : framework.get("categories")) {
-//                List<> subjects = framework.stream()                 .filter(name -> name.getName() = "")                 .collect(Collectors.toList());
-                // Inside the loop where you process each term
-                if (Objects.equals(category.get("code").asText(), "subject")) {
-                    for (JsonNode term : category.get("terms")) {
-                        String competencyName = term.get("name").asText();
-                        String competencyId = term.get("identifier").asText();
+                // Access the framework node in the response
+                JsonNode framework = frameworkJson.get("result").get("framework");
 
-                        // Initialize levelsMap for each competency
-                        Map<String, Object> levelsMap = new HashMap<>();
-                        Map<String, Object> competencyDetails = new HashMap<>();
-                        competencyDetails.put("competencyName", competencyName);
+                for (JsonNode category : framework.get("categories")) {
+                    // Inside the loop where you process each term
+                    if (Objects.equals(category.get("code").asText(), "subject")) {
+                        for (JsonNode term : category.get("terms")) {
+                            String competencyName = term.get("name").asText();
+                            String competencyId = term.get("identifier").asText();
 
-                        JsonNode associations = term.get("associations");
+                            // Initialize levelsMap for each competency
+                            Map<String, Object> levelsMap = new HashMap<>();
+                            Map<String, Object> competencyDetails = new HashMap<>();
+                            competencyDetails.put("competencyName", competencyName);
 
-                        if (associations != null && associations.isArray()) {
-                            for (JsonNode association : associations) {
-                                String levelName = association.get("name").asText();
-                                String levelId = association.get("identifier").asText();
+                            JsonNode associations = term.get("associations");
 
-                                Map<String, String> levelDetails = new HashMap<>();
-                                levelDetails.put("levelName", levelName);
+                            if (associations != null && associations.isArray()) {
+                                for (JsonNode association : associations) {
+                                    String levelName = association.get("name").asText();
+                                    String levelId = association.get("identifier").asText();
 
-                                // Add levelDetails to levelsMap
-                                levelsMap.put(levelId, levelDetails);
+                                    Map<String, String> levelDetails = new HashMap<>();
+                                    levelDetails.put("levelName", levelName);
+
+                                    // Add levelDetails to levelsMap
+                                    levelsMap.put(levelId, levelDetails);
+                                }
                             }
+                            competencyDetails.put("levels", levelsMap);
+                            // Add competencyDetails to competencyMap using competencyCode as the key
+                            competencyMap.put(competencyId, competencyDetails);
                         }
-                        competencyDetails.put("levels", levelsMap);
-                        // Add competencyDetails to competencyMap using competencyCode as the key
-                        competencyMap.put(competencyId, competencyDetails);
                     }
                 }
             }

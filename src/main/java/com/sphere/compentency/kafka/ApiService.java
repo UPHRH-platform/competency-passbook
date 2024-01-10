@@ -8,6 +8,8 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.json.JSONArray;
 import org.json.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
@@ -30,9 +32,11 @@ public class ApiService {
     @Autowired
     private AppProperties props;
     RestTemplate restTemplate = new RestTemplate();
+    private final Logger logger = LoggerFactory.getLogger(ApiService.class);
 
     public void get_hierarchy(String courseId, String userId) throws IOException, InterruptedException {
         String url = props.getGetHierarchyApi() + courseId + "/?mode=edit";
+        logger.info("Hierarchy url "+url);
         try {
             // Make the HTTP request using RestTemplate
             ResponseEntity<String> responseEntity = restTemplate.getForEntity(url, String.class);
@@ -90,6 +94,7 @@ public class ApiService {
 
             // Assuming you have competencyMap initialized somewhere
             String frameworkUrl = props.getFrameworkRead();
+            logger.info("Framework url " + frameworkUrl);
             competencyMap = frameworkRead(frameworkUrl);
 
             JSONArray competencyDetails = new JSONArray();
@@ -153,6 +158,7 @@ public class ApiService {
                 requestObj.put("competencyDetails", competencyDetails);
 
                 mainObj.put("request", requestObj);
+                logger.info("Request payload for passbookUpdate " + mainObj);
                 Passbook_update(userId,mainObj);
         } catch (Exception e) {
             e.printStackTrace();
@@ -237,18 +243,20 @@ public class ApiService {
 
         String request_body = request.toString();
         String url = (props.getPassbookUpdateUrl());
+        logger.info("Passbook url :" + url);
         HashMap mapping = new ObjectMapper().readValue(request_body, HashMap.class);
 
 
         HttpEntity<Map<String, Object>> entity = new HttpEntity<>(mapping, header);
         ResponseEntity<String> passbookResponse = restTemplate.exchange(url, HttpMethod.POST, entity, String.class);
         String responseStr = passbookResponse.getBody();
+        logger.info("PassbookUpdate response: " + responseStr);
+
         assert responseStr != null;
         int begin = responseStr.indexOf("{");
         int end = responseStr.lastIndexOf("}") + 1;
         responseStr = responseStr.substring(begin, end);
         JSONObject passbook_payload = new JSONObject(responseStr);
-
     }
 }
 

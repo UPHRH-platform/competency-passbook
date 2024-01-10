@@ -9,7 +9,7 @@ import org.springframework.stereotype.Component;
 @Getter
 @Component
 public class AppProperties {
-    @Value("${kafka.topic}")
+    @Value("${kafka.input.topic}")
     private String kafkaTopic;
 
     @Value("${kafka.groupID}")
@@ -17,9 +17,6 @@ public class AppProperties {
 
     @Value("${get.hierarchy}")
     private String getHierarchyApi;
-
-    @Value("${get.entityById}")
-    private String getEntityById;
 
     @Value("${passbook.update.url}")
     private String passbookUpdateUrl;
@@ -30,9 +27,10 @@ public class AppProperties {
     @Value("${framework.read}")
     private String frameworkRead;
 
-    @Value("${user.read.api}")
-    private String UserReadApi;
+    @Value("${kafka.output.topic}")
+    private String kafkaOutputTopic;
 
-    @Value("${content.read.api}")
-    private String ContentReadAapi;
+    @Value("${kafka.output.failed.topic}")
+    private String kafkaFailedOutputTopic;
+
 }

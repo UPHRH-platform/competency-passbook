@@ -15,6 +15,7 @@ import org.springframework.stereotype.Component;
 import java.io.IOException;
 import java.time.Duration;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Properties;
 @Component
 public class kafkaConsumer {
@@ -68,12 +69,20 @@ public class kafkaConsumer {
         if (msg != null && !msg.isEmpty() && !msg.trim().isEmpty()) {
             JSONObject json = new JSONObject(record.value());
             JSONObject edata = json.getJSONObject("edata");
-            String userIds = edata.getString("userIds");
+            Object userIdsObject = edata.get("userIds");
+            String userId="";
+            if (userIdsObject instanceof List) {
+                List<String> userIds = (List<String>) userIdsObject;
+                userId = userIds.get(0);
+            } else {
+                userId = edata.getString("userIds");
+            }
+            List<String> userIds = (List<String>)edata.get("userIds");
             // Now, you can pass userIds to your method
             JSONObject relatedObject = json.getJSONObject("edata").getJSONObject("related");
             String courseId = relatedObject.getString("courseId");//do_1139628834519941121286,do_11394806141846323211
             logger.info("Processing Kafka message - userId: {}, courseId: {}", userIds, courseId);
-            api_services.get_hierarchy(courseId, userIds);
+            api_services.get_hierarchy(courseId, userId);
         } else {
             logger.warn("Received empty or null message from Kafka");
         }

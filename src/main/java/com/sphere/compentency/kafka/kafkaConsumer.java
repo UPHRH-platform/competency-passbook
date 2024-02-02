@@ -69,19 +69,20 @@ public class kafkaConsumer {
         if (msg != null && !msg.isEmpty() && !msg.trim().isEmpty()) {
             JSONObject json = new JSONObject(record.value());
             JSONObject edata = json.getJSONObject("edata");
-            Object userIdsObject = edata.get("userIds");
-            String userId="";
-            if (userIdsObject instanceof List) {
-                List<String> userIds = (List<String>) userIdsObject;
-                userId = userIds.get(0);
+            JSONArray userIdsArray = edata.getJSONArray("userIds");
+            String userId = "";
+
+            if (userIdsArray.length() > 0) {
+                // Extract the first userId from the array
+                userId = userIdsArray.getString(0);
             } else {
-                userId = edata.getString("userIds");
+                // Handle the case where the array is empty
+                logger.info("No userIds found in the array");
             }
-            List<String> userIds = (List<String>)edata.get("userIds");
             // Now, you can pass userIds to your method
             JSONObject relatedObject = json.getJSONObject("edata").getJSONObject("related");
             String courseId = relatedObject.getString("courseId");//do_1139628834519941121286,do_11394806141846323211
-            logger.info("Processing Kafka message - userId: {}, courseId: {}", userIds, courseId);
+            logger.info("Processing Kafka message - userId: {}, courseId: {}", userId, courseId);
             api_services.get_hierarchy(courseId, userId);
         } else {
             logger.warn("Received empty or null message from Kafka");

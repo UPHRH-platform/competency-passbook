@@ -81,8 +81,7 @@ public class kafkaConsumer {
                 logger.info("No userIds found in the array");
             }
             // Now, you can pass userIds to your method
-            JSONObject relatedObject = json.getJSONObject("edata").getJSONObject("related");
-            String courseId = relatedObject.getString("courseId");//do_1139628834519941121286,do_11394806141846323211
+            String courseId = json.getJSONObject("edata").getString("courseId");
             logger.info("Processing Kafka message - userId: {}, courseId: {}", userId, courseId);
             api_services.get_hierarchy(courseId, userId);
         } else {

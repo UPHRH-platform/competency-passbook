@@ -27,10 +27,4 @@ public class AppProperties {
     @Value("${framework.read}")
     private String frameworkRead;
 
-    @Value("${kafka.output.topic}")
-    private String kafkaOutputTopic;
-
-    @Value("${kafka.output.failed.topic}")
-    private String kafkaFailedOutputTopic;
-
 }
